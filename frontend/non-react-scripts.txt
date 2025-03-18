@@ -1,0 +1,48 @@
+For Option 3 (creating a simplified version without react-scripts), you will need to make some changes to your project structure. Here's what you need to do:
+
+Location of webpack.config.js:
+
+The webpack.config.js file should be placed in the root of your frontend directory, at the same level as package.json.
+
+
+Changes needed to existing files:
+
+You won't need to change your React component files or their structure
+Your src directory structure can remain the same
+You'll need to modify your package.json to remove react-scripts and add webpack dependencies
+
+
+Additional dependencies to install:
+bashCopycd frontend
+npm install --save-dev webpack webpack-cli webpack-dev-server html-webpack-plugin babel-loader @babel/core @babel/preset-env @babel/preset-react style-loader css-loader postcss-loader
+
+Create a babel.config.js file in the frontend directory:
+javascriptCopymodule.exports = {
+  presets: ['@babel/preset-env', '@babel/preset-react']
+};
+
+Modify your package.json:
+jsonCopy"scripts": {
+  "start": "webpack serve --mode development",
+  "build": "webpack --mode production"
+},
+And remove the dependency on "react-scripts".
+Postcss configuration:
+Make sure you still have your postcss.config.js file for Tailwind to work:
+javascriptCopymodule.exports = {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  }
+};
+
+
+This configuration will allow Webpack to directly build your React application without relying on react-scripts, which should help bypass the dependency issues you're experiencing. Your application code (components, services, etc.) doesn't need to change - you're just changing the build system that processes these files.
+One more thing: if you're using any environment variables (process.env.REACT_APP_*), you'll need to add the DefinePlugin to your webpack config:
+javascriptCopyconst webpack = require('webpack');
+
+// Add this to the plugins array in webpack.config.js
+new webpack.DefinePlugin({
+  'process.env.REACT_APP_API_URL': JSON.stringify(process.env.REACT_APP_API_URL)
+})
+Replace REACT_APP_API_URL with whatever environment variables your application uses.
