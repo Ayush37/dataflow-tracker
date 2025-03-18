@@ -1,3 +1,59 @@
+Install Webpack:
+bashCopynpm install webpack webpack-cli webpack-dev-server html-webpack-plugin --save-dev
+
+Create a webpack.config.js:
+javascriptCopyconst path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+
+module.exports = {
+  entry: './src/index.js',
+  output: {
+    path: path.resolve(__dirname, 'build'),
+    filename: 'bundle.js',
+  },
+  module: {
+    rules: [
+      {
+        test: /\.(js|jsx)$/,
+        exclude: /node_modules/,
+        use: ['babel-loader'],
+      },
+      {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader', 'postcss-loader'],
+      },
+    ],
+  },
+  resolve: {
+    extensions: ['*', '.js', '.jsx'],
+  },
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: './public/index.html',
+    }),
+  ],
+  devServer: {
+    static: {
+      directory: path.join(__dirname, 'build'),
+    },
+    port: 3000,
+  },
+};
+
+Update your package.json scripts:
+jsonCopy"scripts": {
+  "start": "webpack serve --mode development",
+  "build": "webpack --mode production"
+}
+
+
+
+
+
+
+
+
+##########################
 For Option 3 (creating a simplified version without react-scripts), you will need to make some changes to your project structure. Here's what you need to do:
 
 Location of webpack.config.js:
