@@ -1,0 +1,60 @@
+{
+    "flowName": "SNU",
+    "refreshInterval": 120,
+    "databases": {
+      "aws": {
+        "host": "TEST1.db.us-east.amazonaws.com",
+        "user": "AuroraReadWrite",
+        "password": "your-password",
+        "database": "airflow"
+      },
+      "oracle": {
+        "host": "on-prem.test1.db",
+        "user": "testuser",
+        "password": "testpwd",
+        "service": "servicename"
+      }
+    },
+    "flowDefinition": {
+      "overall": "AWS{Calculator_Runs->Cashflow_Generator->Translator_Runs->Intercompany_Runs} ->On-PREM{BPF->FINAL_STAGE}",
+      "subStages": {
+        "AWS": {
+          "Calculator_Runs": "Stage_1_1 -> Stage1_2->Stage1_3",
+          "Cashflow_Generator": "Stage_2",
+          "Translator_Runs": "Stage_3_1,Stage3_2",
+          "Intercompany_Runs": "Stage_4_1,Stage_4_2"
+        },
+        "On-PREM": {
+          "BPF": "Stage5_1,Stage5_2",
+          "FINAL_STAGE": "Stage6_1"
+        }
+      }
+    },
+    "stageMappings": {
+      "aws": {
+        "Stage_1_1": "calculator_stage_1_dag",
+        "Stage1_2": "calculator_stage_2_dag",
+        "Stage1_3": "calculator_stage_3_dag",
+        "Stage_2": "cashflow_generator_dag",
+        "Stage_3_1": "translator_stage_1_dag",
+        "Stage3_2": "translator_stage_2_dag",
+        "Stage_4_1": "intercompany_stage_1_dag",
+        "Stage_4_2": "intercompany_stage_2_dag"
+      },
+      "onPrem": {
+        "Stage5_1": {
+          "bpf_id": 20010,
+          "process_id": 10
+        },
+        "Stage5_2": {
+          "bpf_id": 20007,
+          "process_id": 10
+        },
+        "Stage6_1": {
+          "bpf_id": 20020,
+          "process_id": 10
+        }
+      }
+    }
+  }
+  

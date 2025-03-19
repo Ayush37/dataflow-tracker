@@ -1,6 +1,7 @@
 // services/api.js
 import axios from 'axios';
-import { USE_MOCKS, mockFlows, mockFlowDefinitions, mockStatusData } from '../mocks';
+import { USE_MOCKS, mockFlows, mockFlowDefinitions, mockStatusData, addMockFlow } from '../mocks';
+
 
 const API_BASE_URL = '/api';
 
@@ -69,12 +70,78 @@ export const fetchConfigs = async () => {
 };
 
 // Upload flow configuration
+// export const uploadFlowConfig = async (configData) => {
+//   if (USE_MOCKS) {
+//     console.log("Mock: Upload flow config", configData);
+//     return { status: "success", message: "Configuration uploaded (mock)" };
+//   }
+  
+//   try {
+//     let response;
+    
+//     if (configData instanceof File) {
+//       // Upload file
+//       const formData = new FormData();
+//       formData.append('file', configData);
+      
+//       response = await axios.post(`${API_BASE_URL}/configs/`, formData, {
+//         headers: {
+//           'Content-Type': 'multipart/form-data'
+//         }
+//       });
+//     } else {
+//       // Upload JSON object
+//       response = await axios.post(`${API_BASE_URL}/configs/`, configData);
+//     }
+    
+//     return response.data;
+//   } catch (error) {
+//     console.error('Error uploading configuration:', error);
+//     throw error;
+//   }
+// };
+
 export const uploadFlowConfig = async (configData) => {
   if (USE_MOCKS) {
-    console.log("Mock: Upload flow config", configData);
-    return { status: "success", message: "Configuration uploaded (mock)" };
+    console.log("Mock: Upload flow config");
+    
+    try {
+      let configJson;
+      
+      if (configData instanceof File) {
+        // Read the file
+        const fileContent = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = (e) => resolve(e.target.result);
+          reader.onerror = (e) => reject(e);
+          reader.readAsText(configData);
+        });
+        
+        // Parse JSON from file
+        configJson = JSON.parse(fileContent);
+      } else {
+        // Directly use the object
+        configJson = configData;
+      }
+      
+      // Process the configuration
+      const success = addMockFlow(configJson);
+      
+      if (success) {
+        return { 
+          status: "success", 
+          message: `Flow ${configJson.flowName} created successfully`
+        };
+      } else {
+        throw new Error("Failed to process flow configuration");
+      }
+    } catch (error) {
+      console.error("Error processing mock flow:", error);
+      throw error;
+    }
   }
   
+  // Original code for non-mock mode
   try {
     let response;
     

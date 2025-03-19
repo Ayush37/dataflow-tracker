@@ -40,6 +40,40 @@ const FlowEditor = () => {
     setFile(e.target.files[0]);
   };
 
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+    
+  //   try {
+  //     setLoading(true);
+      
+  //     if (manualInput) {
+  //       // Submit manual input
+  //       const response = await uploadFlowConfig(formData);
+  //       if (response.status === 'success') {
+  //         toast.success(`Flow ${formData.flowName} created successfully`);
+  //         navigate(`/flows/${formData.flowName}`);
+  //       } else {
+  //         toast.error('Failed to create flow configuration');
+  //       }
+  //     } else if (file) {
+  //       // Submit file upload
+  //       const response = await uploadFlowConfig(file);
+  //       if (response.status === 'success') {
+  //         toast.success(response.message);
+  //         navigate('/');
+  //       } else {
+  //         toast.error('Failed to upload configuration');
+  //       }
+  //     } else {
+  //       toast.warning('Please select a file or provide manual input');
+  //     }
+  //   } catch (error) {
+  //     toast.error(`Error: ${error.message}`);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -47,8 +81,16 @@ const FlowEditor = () => {
       setLoading(true);
       
       if (manualInput) {
-        // Submit manual input
-        const response = await uploadFlowConfig(formData);
+        // Submit manual input - create a proper config object
+        const flowConfig = {
+          flowName: formData.flowName,
+          refreshInterval: formData.refreshInterval,
+          databases: formData.databases,
+          flowDefinition: formData.flowDefinition,
+          stageMappings: formData.stageMappings
+        };
+        
+        const response = await uploadFlowConfig(flowConfig);
         if (response.status === 'success') {
           toast.success(`Flow ${formData.flowName} created successfully`);
           navigate(`/flows/${formData.flowName}`);
@@ -73,7 +115,7 @@ const FlowEditor = () => {
       setLoading(false);
     }
   };
-
+  
   const handleFormChange = (e, section, subsection = null) => {
     const { name, value } = e.target;
     
